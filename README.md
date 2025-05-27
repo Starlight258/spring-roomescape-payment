@@ -762,6 +762,31 @@ HTTP/1.1 204
 Content-Type: application/json
 ```
 
+## 예약 결제 기능 
+### 요청
+```json
+POST /payments/approve HTTP/1.1
+cookie: token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwibmFtZSI6IuyWtOuTnOuvvCIsInJvbGUiOiJBRE1JTiJ9.vcK93ONRQYPFCxT5KleSM6b7cl1FE-neSLKaFyslsZM
+host: localhost: 8080
+{
+"paymentKey": "tgen_20250527203038iSZT3",
+"orderId": "ROOMESCAPE_ORDER_MC4zODI4Njg5ODExNTg4",
+"amount": 1000,
+"paymentType": "NORMAL"
+}
+```
+
+### 응답
+```json
+HTTP/1.1 200
+Content-Type: application/json
+{
+"paymentKey": "tgen_20250527203038iSZT3",
+"orderId": "ROOMESCAPE_ORDER_MC4zODI4Njg5ODExNTg4",
+"totalAmount": 1000
+}
+```
+
 ## 예외
 
 - DateTimeParseException : 날짜(yyyy-MM-dd) & 시간(HH:mm) 파싱 예외시 400
