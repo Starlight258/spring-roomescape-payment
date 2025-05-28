@@ -11,6 +11,7 @@ import roomescape.common.exception.ValidationException;
 import roomescape.common.security.exception.ForbiddenException;
 import roomescape.common.security.exception.UnAuthorizedException;
 import roomescape.member.exception.MemberDuplicatedException;
+import roomescape.payment.exception.PaymentApproveException;
 import roomescape.reservationtime.exception.ReservationTimeInUseException;
 
 @RestControllerAdvice
@@ -54,5 +55,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<String> handleForbiddenException(ForbiddenException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
+    @ExceptionHandler(PaymentApproveException.class)
+    public ResponseEntity<String> handlePaymentApproveException(PaymentApproveException e) {
+        return ResponseEntity.status(e.getHttpStatusCode()).body(e.getMessage());
     }
 }
