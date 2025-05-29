@@ -24,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -38,19 +40,24 @@ import roomescape.payment.presentation.dto.response.PaymentApproveResponse;
 import roomescape.reservationslot.presentation.dto.response.MyReservationSlotResponse;
 import roomescape.reservationslot.presentation.dto.response.ReservationResponse;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @TestPropertySource(properties = {
         "spring.sql.init.data-locations=classpath:test-data.sql"
 })
 public class RegularTest {
 
+    @LocalServerPort
+    private int port;
+
     @MockitoBean
     private PaymentClient paymentClient;
+
     private String REGULAR_TOKEN;
 
     @BeforeEach
     void setUp() {
+        RestAssured.port = port;
         REGULAR_TOKEN = loginAndGetAuthToken(REGULAR_EMAIL, PASSWORD);
     }
 
@@ -183,7 +190,10 @@ public class RegularTest {
 
     @Test
     void approvePayment() {
-        createReservation();
+        createTheme("추리");
+        createReservationTime();
+        createRegularReservation(1L);
+
         String paymentKey = "PAYMENT_KEY";
         String orderId = "ORDER_ID";
         long amount = 5000L;
@@ -192,8 +202,10 @@ public class RegularTest {
         PaymentApproveResponse paymentApproveResponse = new PaymentApproveResponse(paymentKey, orderId, amount);
         Mockito.when(paymentClient.approvePayment(paymentApproveRequest)).thenReturn(paymentApproveResponse);
 
+        String regularToken = loginAndGetAuthToken(REGULAR_EMAIL, PASSWORD);
+
         PaymentApproveResponse response = RestAssured.given().log().all()
-                .cookie(TOKEN, REGULAR_TOKEN)
+                .cookie(TOKEN, regularToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(paymentRequest)
                 .when().post("/payments/approve")
