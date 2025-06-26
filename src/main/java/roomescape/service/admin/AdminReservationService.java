@@ -42,7 +42,8 @@ public class AdminReservationService {
 
     public ReservationPreservationResponse create(final AdminReservationPreservationRequest request) {
         LocalDate date = TimeUtils.parseLocalDate(request.date());
-        Reservation reservation = createHandler.create(date, request.timeId(), request.themeId(), request.memberId());
+        Reservation reservation = createHandler.create(date, request.timeId(), request.themeId(), request.memberId(),
+                null);
         return ReservationPreservationResponse.from(reservation);
     }
 

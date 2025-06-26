@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import roomescape.domain.payment.Payment;
 import roomescape.domain.reservation.Reservation;
 import roomescape.domain.reservation.ReservationStatus;
 import roomescape.domain.slot.Slot;
@@ -18,7 +19,9 @@ public record MyReservationRetrievalResponse(
         LocalDate date,
         @JsonFormat(pattern = "HH:mm")
         LocalTime time,
-        String status
+        String status,
+        String paymentKey,
+        Long amount
 ) {
     public static List<MyReservationRetrievalResponse> of(final List<Reservation> reservations,
                                                           final List<WaitingWithRank> waitingWithRanks) {
@@ -44,12 +47,15 @@ public record MyReservationRetrievalResponse(
 
     private static MyReservationRetrievalResponse from(Reservation reservation) {
         Slot slot = reservation.getSlot();
+        Payment payment = reservation.getPayment();
         return new MyReservationRetrievalResponse(
                 null,
                 slot.getTheme().getName().getName(),
                 slot.getDate().getDate(),
                 slot.getTime().getStartAt(),
-                ReservationStatus.RESERVED.getViewName()
+                ReservationStatus.RESERVED.getViewName(),
+                payment.getPaymentKey(),
+                payment.getAmount()
         );
     }
 
@@ -60,7 +66,9 @@ public record MyReservationRetrievalResponse(
                 slot.getTheme().getName().getName(),
                 slot.getDate().getDate(),
                 slot.getTime().getStartAt(),
-                String.format(ReservationStatus.WAITING.getViewName(), waitingWithRank.rank())
+                String.format(ReservationStatus.WAITING.getViewName(), waitingWithRank.rank()),
+                null,
+                null
         );
     }
 }

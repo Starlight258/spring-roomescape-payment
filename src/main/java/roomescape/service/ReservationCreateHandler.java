@@ -3,6 +3,7 @@ package roomescape.service;
 import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import roomescape.domain.member.Member;
+import roomescape.domain.payment.Payment;
 import roomescape.domain.reservation.Reservation;
 import roomescape.domain.reservation.ReservationDate;
 import roomescape.domain.reservationtime.ReservationTime;
@@ -32,7 +33,7 @@ public class ReservationCreateHandler {
         this.reservationTimeRepository = reservationTimeRepository;
     }
 
-    public Reservation create(LocalDate date, Long timeId, Long themeId, Long memberId) {
+    public Reservation create(LocalDate date, Long timeId, Long themeId, Long memberId, Payment payment) {
         ReservationDate reservationDate = new ReservationDate(date);
         ReservationTime reservationTime = getReservationTime(timeId);
         Theme theme = getTheme(themeId);
@@ -40,7 +41,7 @@ public class ReservationCreateHandler {
         Member member = getMember(memberId);
 
         return reservationRepository.save(
-                Reservation.createReservation(reservationDate, reservationTime, theme, member));
+                Reservation.createReservation(reservationDate, reservationTime, theme, member, payment));
     }
 
     private ReservationTime getReservationTime(final Long timeId) {

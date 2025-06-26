@@ -48,7 +48,7 @@ public class ReservationService {
         PaymentResponse paymentResponse = paymentClient.approvePayment(PaymentRequest.from(request));
         LocalDate date = TimeUtils.parseLocalDate(request.date());
         Reservation reservation = createHandler.create(date, request.timeId(), request.themeId(),
-                memberPrinciple.memberId());
+                memberPrinciple.memberId(), paymentResponse.toPayment());
         return ReservationPreservationResponse.from(reservation);
     }
 

@@ -38,7 +38,7 @@ public class ReservationDeletionHandler {
                         slot.getTime())
                 .ifPresent(waiting -> {
                     waitingRepository.deleteById(waiting.getId());
-                    reservationRepository.save(new Reservation(waiting.getSlot(), waiting.getMember()));
+                    reservationRepository.save(new Reservation(waiting.getSlot(), waiting.getMember(), null));
                 });
     }
 }
