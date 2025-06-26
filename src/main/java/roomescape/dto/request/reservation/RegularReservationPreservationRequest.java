@@ -9,8 +9,15 @@ public record RegularReservationPreservationRequest(
         @NotNull
         Long timeId,
         @NotNull
-        Long themeId
-
+        Long themeId,
+        @NotNull
+        String orderId,
+        @NotBlank
+        String paymentKey,
+        @NotBlank
+        String paymentType,
+        @NotNull
+        Long amount
 ) {
 
 }

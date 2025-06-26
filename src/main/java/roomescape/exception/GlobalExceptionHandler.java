@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import roomescape.external.dto.PaymentFailedResult;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,6 +32,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<String> handleForbiddenException(final ForbiddenException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
+    @ExceptionHandler(RecoverableExternalException.class)
+    public ResponseEntity<PaymentFailedResult> handleRecoverableExternalException(
+            final RecoverableExternalException e) {
+        return ResponseEntity.badRequest().body(e.getPaymentFailedResult());
+    }
+
+    @ExceptionHandler(UnRecoverableExternalException.class)
+    public ResponseEntity<PaymentFailedResult> handleUnRecoverableExternalException(
+            final UnRecoverableExternalException e) {
+        return ResponseEntity.internalServerError().body(e.getPaymentFailedResult());
     }
 
     @ExceptionHandler(RoomescapeException.class)

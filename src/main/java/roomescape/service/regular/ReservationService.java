@@ -6,13 +6,16 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import roomescape.common.TimeUtils;
 import roomescape.domain.reservation.Reservation;
-import roomescape.dto.request.waiting.WaitingWithRank;
 import roomescape.dto.request.member.MemberPrinciple;
 import roomescape.dto.request.reservation.RegularReservationPreservationRequest;
+import roomescape.dto.request.waiting.WaitingWithRank;
 import roomescape.dto.response.reservation.MyReservationRetrievalResponse;
 import roomescape.dto.response.reservation.ReservationPreservationResponse;
 import roomescape.dto.response.reservation.ReservationRetrievalResponse;
 import roomescape.exception.ForbiddenException;
+import roomescape.external.PaymentClient;
+import roomescape.external.dto.PaymentRequest;
+import roomescape.external.dto.PaymentResponse;
 import roomescape.repository.ReservationRepository;
 import roomescape.repository.WaitingRepository;
 import roomescape.service.ReservationCreateHandler;
@@ -25,20 +28,24 @@ public class ReservationService {
     private final WaitingRepository waitingRepository;
     private final ReservationCreateHandler createHandler;
     private final ReservationDeletionHandler reservationDeletionHandler;
+    private final PaymentClient paymentClient;
 
     public ReservationService(final ReservationRepository reservationRepository,
                               final WaitingRepository waitingRepository,
                               final ReservationCreateHandler createHandler,
-                              final ReservationDeletionHandler reservationDeletionHandler
+                              final ReservationDeletionHandler reservationDeletionHandler,
+                              final PaymentClient paymentClient
     ) {
         this.reservationRepository = reservationRepository;
         this.waitingRepository = waitingRepository;
         this.createHandler = createHandler;
         this.reservationDeletionHandler = reservationDeletionHandler;
+        this.paymentClient = paymentClient;
     }
 
     public ReservationPreservationResponse create(final RegularReservationPreservationRequest request,
                                                   final MemberPrinciple memberPrinciple) {
+        PaymentResponse paymentResponse = paymentClient.approvePayment(PaymentRequest.from(request));
         LocalDate date = TimeUtils.parseLocalDate(request.date());
         Reservation reservation = createHandler.create(date, request.timeId(), request.themeId(),
                 memberPrinciple.memberId());

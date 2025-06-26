@@ -19,3 +19,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     defer-datasource-initialization: true
+
+external:
+  payment:
+    secret-key: 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6:'
