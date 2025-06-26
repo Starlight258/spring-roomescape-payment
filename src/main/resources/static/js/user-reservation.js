@@ -220,7 +220,7 @@ async function fetchReservationPayment(paymentData, reservationData) {
             });
         } else {
             response.json().then(successBody => {
-                window.alert("예약 결제 성공 : " + successBody.message)
+                window.alert("예약 결제 성공");
                 console.log("예약 결제 성공 : " + JSON.stringify(successBody));
                 window.location.reload();
             });
